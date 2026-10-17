@@ -122,13 +122,16 @@ Her alt ağda ilk 10 IP adresi, statik yapılandırmalar ve sanal ağ geçitleri
 | `F0/4` | Access Point (APK1, APK2, APK3) |
 | `G0/1 - 2` | CSW1 ve CSW2 Trunk uplink bağlantıları |
 
-> 📸 *SWK-1 üzerinde VLAN ve Trunk port doğrulama görüntüsü buraya eklenebilir.*
+
+<img width="649" height="264" alt="image" src="https://github.com/user-attachments/assets/8992ce66-e019-448d-bedd-f708496fac54" />
+<img width="646" height="237" alt="image" src="https://github.com/user-attachments/assets/c5a64535-1437-4357-90b7-f49836ab5e0b" />
 
 ### Layer 2 EtherChannel (CSW1 ↔ CSW2)
 
 - **Port-Channel 1** — LACP Active Mode, Trunk
 
-> 📸 *EtherChannel doğrulama görüntüsü buraya eklenebilir.*
+
+<img width="754" height="360" alt="image" src="https://github.com/user-attachments/assets/2f823d2c-dede-4b17-8300-b61b213d1a32" />
 
 ---
 
