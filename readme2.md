@@ -114,3 +114,76 @@ VLAN 50 : 10.0.5.0/24  (Exclude: 10.0.5.1 - 10.0.5.10)
 VLAN 70 : 10.0.7.0/24  (Exclude: 10.0.7.1 - 10.0.7.10)
 VLAN 80 : 10.0.8.0/24  (Exclude: 10.0.8.1 - 10.0.8.10)
 VLAN 90 : 10.0.9.0/24  (Exclude: 10.0.9.1 - 10.0.9.10)
+
+! CSW1 OSPF
+router ospf 1
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ network 10.1.0.2 0.0.0.0 area 0
+
+! CSW2 OSPF
+router ospf 1
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ network 10.2.0.2 0.0.0.0 area 0
+
+VLAN IDCSW1 OSPF CostCSW2 OSPF CostTercih Edilen Yol1, 20, 50, 60, 80[cite: 1]10[cite: 1]100[cite: 1]CSW1[cite: 1]30, 40, 70, 90[cite: 1]100[cite: 1]10[cite: 1]CSW2[cite: 1]
+
+! Floating Static Routes (ISP Yedekliliği)
+ip route 0.0.0.0 0.0.0.0 203.0.113.1        ! Primary (ISP1)
+ip route 0.0.0.0 0.0.0.0 203.0.112.1 5      ! Backup (ISP2, AD=5)
+
+! OSPF Dağıtımı ve Varsayılan Rota Enjeksiyonu
+router ospf 1
+ network 10.1.0.1 0.0.0.0 area 0
+ network 10.2.0.1 0.0.0.0 area 0
+ default-information originate
+
+interface range GigabitEthernet6/0 - 7/0
+ ip nat inside
+
+interface range GigabitEthernet8/0 - 9/0
+ ip nat outside
+
+access-list 10 permit 10.0.0.0 0.0.0.255
+access-list 11 permit 10.0.0.0 0.0.0.255
+
+ip nat inside source list 10 interface GigabitEthernet8/0 overload
+ip nat inside source list 11 interface GigabitEthernet9/0 overload
+
+4. Anahtarlama ve Port Dağılımı
+EtherChannel: CSW1 ve CSW2 arasında L2 LACP aktif modda Port-Channel 1 konfigüre edilmiş ve Trunk moduna alınmıştır[cite: 1].
+
+Access Switch Port Dağılımı (SWK serisi):
+
+FastEthernet0/1 - 0/3: IP Telefonlar ve Uç Bilgisayarlar[cite: 1]
+
+FastEthernet0/4: Access Point (CAPWAP / VLAN 1)[cite: 1]
+
+GigabitEthernet0/1 - 0/2: CSW1 ve CSW2 Switch Trunk Uplink'leri[cite: 1]
+
+! Uç Port Güvenliği
+interface range FastEthernet0/1 - 24
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+
+! DHCP Snooping Yapılandırması
+ip dhcp snooping
+ip dhcp snooping vlan 1,20,30,40,50,70,80,90
+
+! Uplink Arayüzleri (Trust)
+interface range GigabitEthernet0/1 - 2
+ ip dhcp snooping trust
+
+! ACL 100: Kritik Sunucu Koruması (Yalnızca DNS/NTP İzni, Doğrudan Erişime Engel)
+ip access-list extended 100
+ permit udp any host 10.0.6.5 eq domain
+ permit udp any host 10.0.6.5 eq ntp
+ deny   ip any host 10.0.6.5
+ permit ip any any
+
+! ACL 101: Güvenli Yönetim (Yalnızca VLAN 40 IT Departmanına SSH İzni)
+ip access-list extended 101
+ permit tcp 10.0.4.0 0.0.0.255 any eq 22
+ deny   tcp any any eq 22
+ permit ip any any
