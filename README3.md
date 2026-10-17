@@ -1,6 +1,7 @@
 # 🌐 Enterprise-Networking
 
 Yüksek erişilebilirlik (High Availability), yedeklilik (Redundancy), katmanlı ağ güvenliği ve dinamik yönlendirme protokolleri kullanılarak tasarlanmış, uçtan uca bir **kurumsal ağ (Enterprise Network)** mimarisidir. Ağ yapısı **Erişim (Access)**, **Dağıtım/Çekirdek (Distribution/Core)** ve **Kenar (Edge)** katmanlarından oluşur.
+<img width="954" height="684" alt="image" src="https://github.com/user-attachments/assets/33fafe78-cd63-4302-b91c-bf7180b2912f" />
 
 ---
 
